@@ -1,0 +1,9 @@
+# Игнорируем локальные файлы
+chromedriver.exe
+__pycache__/
+.pytest_cache/
+*.pyc
+.idea/
+.vscode/
+.env
+
