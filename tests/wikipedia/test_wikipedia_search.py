@@ -2,11 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 # запуск браузера
-service = Service("chromedriver.exe")
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+driver = webdriver.Chrome(service=Service)
 
 # открываем сайт
 driver.get("https://ru.wikipedia.org")

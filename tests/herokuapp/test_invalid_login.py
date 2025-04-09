@@ -2,7 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import time
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 # вход с корректным паролем и проверка welcome-сообщения
 def test_login_valid():
     # создаем драйвер
@@ -10,20 +13,29 @@ def test_login_valid():
     driver.get("https://the-internet.herokuapp.com/login")
 
     # вводим имя пользователя
-    username = driver.find_element(By.ID, "username")
-    username.send_keys("tomsmith")
+    username = driver.find_element(By.ID, "username").send_keys("tomsmith")
 
-    # вводим пароль
-    password = driver.find_element(By.ID, "password")
-    password.send_keys("wrongPassword")
+    # вводим неверный пароль
+    password = driver.find_element(By.ID, "password").send_keys("wrongPassword")
+    
+    # ждем пока кнопка станет кликабельной и нажимаем
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))
+    )
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    
+    # ждем, что остались на Login(не было редиректа)
+    WebDriverWait(driver, 10).until(
+        EC.url_contains("login")
+    )
 
-    # нажимает на кнопку логина
-    login_button = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
-    login_button.click()
-
+    # ждем появления текста ошибки
+    WebDriverWait(driver, 10).until(
+        EC.text_to_be_present_in_element((By.ID, "flash"), "Your password is invalid!")
+    )
     # читаем сообщение об ошибке:
     error_message = driver.find_element(By.ID, "flash")
     assert "Your password is invalid!" in error_message.text
 
-    time.sleep(3)
+    
     driver.quit()
