@@ -13,7 +13,8 @@ def test_practice_automation():
     driver.find_element(By.CSS_SELECTOR, "input[id='password']").send_keys("Password123")
 
     driver.find_element(By.ID, "submit").click()
-   
-   
+    WebDriverWait(driver, 10).until(
+        EC.url_contains("logged-in-successfully")
+    )
     assert "logged-in-successfully" in driver.current_url
     driver.quit()
